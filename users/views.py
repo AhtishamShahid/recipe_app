@@ -1,12 +1,13 @@
 # Create your views here.
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 from .serializers import UserSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework import generics
+from django.contrib.auth.models import User
 
 
 class UserCreate(APIView):
@@ -40,3 +41,13 @@ class CustomAuthToken(ObtainAuthToken):
             'email': user.email,
             'username': user.username
         })
+
+
+class UserList(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

@@ -1,14 +1,11 @@
-from django.test import TestCase
-
 # Create your tests here.
 from django.urls import reverse
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from django.contrib.auth.models import User
 from rest_framework import status
 
-
-# from rest_framework.reverse import reverse
+from users.views import APIChangePasswordView
 
 
 class UserTest(APITestCase):
@@ -142,6 +139,9 @@ class UserTest(APITestCase):
     def test_has_correct_recipe_count(self):
         pass
 
+    def test_has_correct_recipe_list(self):
+        pass
+
 
 class LoginTest(APITestCase):
     def setUp(self):
@@ -168,3 +168,95 @@ class LoginTest(APITestCase):
         self.assertEqual(response.data['username'], data['username'])
         self.assertEqual(response.data['email'], data['email'])
         self.assertEqual(response.data['token'], token.key)
+
+
+def make_change_pwd_request(change_password_data, user):
+    factory = APIRequestFactory()
+    view = APIChangePasswordView.as_view()
+    request = factory.put(reverse('user-change-password'), data=change_password_data)
+    force_authenticate(request, user=user)
+    return view(request)
+
+
+class ChangePasswordTest(APITestCase):
+    def setUp(self):
+        # URL for creating an account.
+        self.change_password = reverse('user-change-password')
+
+        # create user for testing
+        self.user_data = {
+            'username': 'zombie',
+            'email': 'zombie@gmail.com',
+            'password': 'zombie123'
+        }
+
+        self.client.post(reverse('user-create'), self.user_data, format='json')
+        self.user = User.objects.latest('id')
+
+    def test_change_user_change_password(self):
+        """
+        Ensure we can create a new user and test change password process
+        """
+
+        # Make an authenticated request to the view...
+        change_password_data = {
+            'old_password': 'zombie123',
+            'confirmed_password': '123465789',
+            'password': '123465789'
+        }
+        response = make_change_pwd_request(change_password_data, self.user)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_change_password_missing_old(self):
+        """
+        Test with missing old password
+        """
+
+        # Make an authenticated request to the view...
+        change_password_data = {
+            'confirmed_password': '123465789',
+            'password': '123465789'
+        }
+        response = make_change_pwd_request(change_password_data, self.user)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(len(response.data['old_password']), 1)
+
+    def test_user_change_password_missing_confirm(self):
+        """
+        Test with missing confirm password
+        """
+
+        # Make an authenticated request to the view...
+        change_password_data = {
+            'old_password': 'zombie123',
+            'password': '123465789'
+        }
+        response = make_change_pwd_request(change_password_data, self.user)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(len(response.data['confirmed_password']), 1)
+
+    def test_user_change_password_missing_password(self):
+        """
+        Test with missing password
+        """
+        # Make an authenticated request to the view...
+        change_password_data = {
+            'old_password': 'zombie123',
+            'confirmed_password': '123465789',
+        }
+        response = make_change_pwd_request(change_password_data, self.user)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(len(response.data['password']), 1)
+
+    def test_user_change_password_without_auth(self):
+        """
+        Test with change password without auth
+        """
+        # Make an authenticated request to the view...
+        change_password_data = {
+            'old_password': 'zombie123',
+            'confirmed_password': '123465789',
+            'password': '123465789'
+        }
+        response = self.client.put(reverse('user-change-password'), data=change_password_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

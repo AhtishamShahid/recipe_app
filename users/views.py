@@ -1,8 +1,9 @@
 # Create your views here.
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status, permissions
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserPasswordChangeSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -51,3 +52,12 @@ class UserList(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class APIChangePasswordView(generics.UpdateAPIView):
+    serializer_class = UserPasswordChangeSerializer
+    model = User
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, queryset=None):
+        return self.request.user

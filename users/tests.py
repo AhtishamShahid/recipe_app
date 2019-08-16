@@ -260,3 +260,17 @@ class ChangePasswordTest(APITestCase):
         }
         response = self.client.put(reverse('user-change-password'), data=change_password_data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class FollowersManagementTests(APITestCase):
+    def setUp(self):
+        tim, c = User.objects.get_or_create(username='tim')
+        chris, c = User.objects.get_or_create(username='chris')
+        print(tim, chris)
+        tim.userprofile.follows.add(chris.userprofile)  # chris follows tim
+        self.b = tim.userprofile.follows.all()  # list of userprofiles of users that tim follows
+        self.a = chris.userprofile.followed_by.all()  # list of userprofiles of users that follow chris
+
+    def test_follow_status(self):
+        print(self.a[0])
+        print(self.b[0])

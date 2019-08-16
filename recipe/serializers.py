@@ -4,10 +4,10 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from .models import Recipe, Ingredients
 
 
-class IngredientsSerializer(PrimaryKeyRelatedField, serializers.ModelSerializer):
+class IngredientsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredients
-        fields = '__all__'
+        fields = ['title', 'pub_date']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -17,11 +17,16 @@ class RecipeSerializer(serializers.ModelSerializer):
     directions = CharField(max_length=600, required=True)
     user_id = PrimaryKeyRelatedField(read_only=True)
     pub_date = DateTimeField(read_only=True)
-    ingredients_set = IngredientsSerializer(read_only=True, many=True)
+    ingredients = PrimaryKeyRelatedField(required=True, many=True, queryset=Ingredients.objects.all())
 
     def create(self, validated_data):
-        return Recipe.objects.create(**validated_data, user_id=self.context['request'].user.id)
+        ingredients = validated_data.pop('ingredients')
+        recipe = Recipe(**validated_data, user_id=self.context['request'].user.id)
+        recipe.save()
+        for ingredient in ingredients:
+            ingredient.recipe_set.add(recipe)
+        return recipe
 
     class Meta:
         model = Recipe
-        fields = ['id', 'title', 'description', 'directions', 'user_id', 'pub_date', 'ingredients_set']
+        fields = ['id', 'title', 'description', 'directions', 'user_id', 'pub_date', 'ingredients']

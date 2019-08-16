@@ -4,6 +4,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 
 from recipe.models import Recipe
+from users.models import UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,9 +19,18 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, write_only=True)
     recipe_count = serializers.SerializerMethodField('get_recipe_count')
     recipe = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    following = serializers.SerializerMethodField('get_if_following')
 
     def get_recipe_count(self, obj):
         return Recipe.objects.filter(user_id=obj.pk).count()
+
+    def get_if_following(self, obj):
+        is_follower = obj.userprofile.followed_by.filter(user_id=self.context['request'].user.id)
+        print(is_follower)
+        if is_follower:
+            return True
+        else:
+            return False
 
     def create(self, validated_data):
         user = User.objects.create_user(validated_data['username'], validated_data['email'],
@@ -30,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'recipe_count', 'recipe')
+        fields = ('id', 'username', 'email', 'password', 'recipe_count', 'recipe', 'following')
 
 
 class UserPasswordChangeSerializer(serializers.Serializer):
@@ -58,5 +68,4 @@ class UserPasswordChangeSerializer(serializers.Serializer):
 
     @property
     def data(self):
-        # just return success dictionary. you can change this to your need, but i dont think output should be user data after password change
         return {'Success': True}

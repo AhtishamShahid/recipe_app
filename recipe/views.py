@@ -10,7 +10,15 @@ class RecipeList(generics.ListCreateAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
 
-    # permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        queryset = Recipe.objects.all()
+        user = self.request.query_params.get('user_id')
+
+        if user:
+            queryset = queryset.filter(user_id=user)
+
+        return queryset
+
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return self.create(request, *args, **kwargs)
@@ -25,9 +33,6 @@ class RecipeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = (IsOwnerOrReadOnly,)
-    # def put(self, request, *args, **kwargs):
-    #     if request.user.is_authenticated and IsOwnerOrReadOnly:
-    #         return self.update(request, *args, **kwargs)
 
 
 class IngredientList(generics.ListCreateAPIView):

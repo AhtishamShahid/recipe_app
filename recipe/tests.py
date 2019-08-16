@@ -44,14 +44,18 @@ class RecipeTest(APITestCase):
             'title': 'title',
             'description': 'title',
             'directions': 'title',
+            'ingredients': [
+                1
+            ]
         }
         response = create_recipe(data, self.test_user)
-        self.assertEqual(Recipe.objects.count(), 2)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'], data['title'])
         self.assertEqual(response.data['description'], data['description'])
         self.assertEqual(response.data['directions'], data['directions'])
         self.assertEqual(response.data['user_id'], self.test_user.id)
+        self.assertEqual(response.data['ingredients'], data['ingredients'])
+        self.assertEqual(Recipe.objects.count(), 2)
 
     def test_create_recipe_without_title(self):
         """
@@ -76,9 +80,7 @@ class RecipeTest(APITestCase):
             'title': 'title',
             'directions': 'title',
         }
-
         response = create_recipe(data, self.test_user)
-
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Recipe.objects.count(), 1)
         self.assertEqual(len(response.data['description']), 1)

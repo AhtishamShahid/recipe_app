@@ -1,5 +1,7 @@
 # Create your views here.
+from django.http import JsonResponse
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status, permissions
@@ -47,6 +49,7 @@ class CustomAuthToken(ObtainAuthToken):
 class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    paginate = 3
 
 
 class UserDetail(generics.RetrieveAPIView):
@@ -61,3 +64,15 @@ class APIChangePasswordView(generics.UpdateAPIView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def follow_user(request, format=None, user_id=None):
+    try:
+        to_follow = User.objects.get(pk=user_id)
+        follower = User.objects.get(pk=request.user.pk)
+        follower.userprofile.follows.add(to_follow.userprofile)
+        return Response(status=status.HTTP_200_OK, data={'Success': True})
+    except User.DoesNotExist:
+        raise status.HTTP_404_NOT_FOUND

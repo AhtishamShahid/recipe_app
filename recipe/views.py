@@ -1,12 +1,17 @@
-from rest_framework import generics, permissions
+"""
+Recipe API Views
+"""
+from rest_framework import generics
 from rest_framework.response import Response
-
 from recipe.permissions import IsOwnerOrReadOnly
 from .models import Recipe, Ingredients
 from .serializers import RecipeSerializer, IngredientsSerializer
 
 
 class RecipeList(generics.ListCreateAPIView):
+    """
+    Recipe listing view
+    """
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
 
@@ -29,12 +34,18 @@ class RecipeList(generics.ListCreateAPIView):
         })
 
 
-class RecipeDetail(generics.RetrieveUpdateDestroyAPIView):
+class RecipeDetail(generics.RetrieveUpdateDestroyAPIView):  # pylint:disable=too-many-ancestors
+    """
+    CBV for Recipe detail page
+    """
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = (IsOwnerOrReadOnly,)
 
 
 class IngredientList(generics.ListCreateAPIView):
+    """
+    CBV for IngredientList
+    """
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer

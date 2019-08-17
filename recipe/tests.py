@@ -1,24 +1,25 @@
-from django.test import TestCase
-
-from django.test import TestCase
-
+"""
 # Create your tests here.
+"""
 from django.urls import reverse
+from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
-from django.contrib.auth.models import User
 from rest_framework import status
 from recipe.views import RecipeList
 from .models import Recipe, Ingredients
 
 
-# from rest_framework.reverse import reverse
-
 def create_recipe(data, user):
+    """
+    # Make an authenticated request to the view...
+    :param data:
+    :param user:
+    :return:
+    """
     factory = APIRequestFactory()
     view = RecipeList.as_view()
 
-    # Make an authenticated request to the view...
     request = factory.post(reverse('recipes'), data=data)
     force_authenticate(request, user=user)
     response = view(request)
@@ -26,8 +27,14 @@ def create_recipe(data, user):
 
 
 class RecipeTest(APITestCase):
+    """
+    Test Recipe CRUD
+    """
     def setUp(self):
-        # We want to go ahead and originally create a RecipeTest.
+        """
+         # We want to go ahead and originally create a RecipeTest.
+        :return:
+        """
         self.test_user = User.objects.create_user('testuser', 'test@example.com', 'testpassword')
         self.ingredient = Ingredients.objects.create(title='Meat')
         self.recipe = Recipe(title='Chicken', description='This is recipe'
@@ -100,7 +107,7 @@ class RecipeTest(APITestCase):
         self.assertEqual(Recipe.objects.count(), 1)
         self.assertEqual(len(response.data['directions']), 1)
 
-    def test_create_recipe_without_Auth(self):
+    def test_create_recipe_without_auth(self):
         """
         Ensure we can create a new recipe and .
         """
@@ -115,10 +122,19 @@ class RecipeTest(APITestCase):
         self.assertEqual(Recipe.objects.count(), 1)
 
     def user_cannot_edit_others_recipe(self):
-        pass
+        """
+        user_cannot_edit_others_recipe
+        :return:
+        """
 
     def user_cannot_delete_others_recipe(self):
-        pass
+        """
+        user_cannot_delete_others_recipe
+        :return:
+        """
 
     def add_ingredients_to_recipe(self):
-        pass
+        """
+        add_ingredients_to_recipe
+        :return:
+        """

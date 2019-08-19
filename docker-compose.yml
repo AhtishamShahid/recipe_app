@@ -16,7 +16,7 @@ services:
   web:
     build: .
     command: >
-      bash -c "sleep 20
+      bash -c "sleep 60
       && python manage.py migrate
       && python manage.py runserver 0.0.0.0:8000"
 #      sleep 10 ; python manage.py runserver 0.0.0.0:8000"

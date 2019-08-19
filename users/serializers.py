@@ -39,7 +39,8 @@ class UserSerializer(serializers.ModelSerializer):
         :param obj:
         :return:
         """
-        return obj.userprofile.followed_by.filter(user_id=self.context['request'].user.id)
+
+        return obj.userprofile.followed_by.filter(user_id=self.context['request'].user.id).exists()
 
     def create(self, validated_data):
         """

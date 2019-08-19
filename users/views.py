@@ -54,7 +54,7 @@ class CustomAuthToken(ObtainAuthToken):
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user) # pylint: disable=unused-variable
+        token, created = Token.objects.get_or_create(user=user)  # pylint: disable=unused-variable
         return Response({
             'token': token.key,
             'user_id': user.pk,
@@ -70,6 +70,19 @@ class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     paginate = 3
+
+    def get_queryset(self):
+        queryset = User.objects.all()
+        user = self.request.query_params.get('my_followings')
+
+        following_ids = []
+        if user:
+            User.objects.get(pk=self.request.user.id).userprofile.follows.add(User.objects.get(pk=1).userprofile)
+            followings = User.objects.get(pk=self.request.user.pk).userprofile.follows.all()
+            for follow in followings:
+                following_ids.append(follow.user_id)
+            queryset = User.objects.filter(id__in=following_ids).all()
+        return queryset
 
 
 class UserDetail(generics.RetrieveAPIView):

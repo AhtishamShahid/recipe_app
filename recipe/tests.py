@@ -123,10 +123,18 @@ class RecipeTest(APITestCase):
         self.assertEqual(Recipe.objects.count(), 1)
 
     def test_recipe_list_page(self):
+        """
+        test_recipe_list_page
+        :return:
+        """
         response = self.client.get(reverse('recipes'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_recipe_detail_page(self):
+        """
+        test_recipe_detail_page
+        :return:
+        """
         recipe = Recipe.objects.first()
         response = self.client.get(reverse('recipes') + str(recipe.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

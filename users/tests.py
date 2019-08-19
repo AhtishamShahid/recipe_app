@@ -315,10 +315,16 @@ class ChangePasswordTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_list_page(self):
+        """
+        test_user_list_page
+        """
         response = self.client.get(reverse('user-create'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_detail_page(self):
+        """
+        test_user_detail_page
+        """
         response = self.client.get(reverse('user-create'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

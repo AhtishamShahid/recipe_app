@@ -77,7 +77,6 @@ class UserList(generics.ListCreateAPIView):
 
         following_ids = []
         if user:
-            User.objects.get(pk=self.request.user.id).userprofile.follows.add(User.objects.get(pk=1).userprofile)
             followings = User.objects.get(pk=self.request.user.pk).userprofile.follows.all()
             for follow in followings:
                 following_ids.append(follow.user_id)

@@ -1,11 +1,13 @@
 """
 user Module serializer
 """
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 from recipe.models import Recipe
+from users.models import UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -98,3 +100,24 @@ class UserPasswordChangeSerializer(serializers.Serializer):
     @property
     def data(self):
         return {'Success': True}
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ('id', 'user_id')
+
+    def create(self, validated_data):
+        to_follow = User.objects.get(pk=validated_data['user_id']).userprofile
+        user = self.context['request'].user.userprofile
+        user.follows.add(to_follow)
+        return user
+
+    def validate(self, attrs):
+        try:
+            User.objects.get(pk=attrs['user_id'])
+        except User.DoesNotExist:
+            raise serializers.ValidationError('This user does not exist.')
+        return attrs

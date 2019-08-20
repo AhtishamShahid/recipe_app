@@ -2,7 +2,6 @@
 """
 user Application views
 """
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
@@ -11,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import generics
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, UserPasswordChangeSerializer
+from .serializers import UserSerializer, UserPasswordChangeSerializer, UserProfileSerializer
 
 
 class UserCreate(APIView):
@@ -108,21 +107,9 @@ class APIChangePasswordView(generics.UpdateAPIView):
         return self.request.user
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def follow_user(request):
+class FollowUser(generics.CreateAPIView):
     """
-    User can follow another user
-    :param request:
-    :return:
+    Follow user crud added
     """
-    if 'user_id' in request.POST:
-        try:
-            to_follow = User.objects.get(pk=request.POST['user_id'])
-            follower = User.objects.get(pk=request.user.pk)
-            follower.userprofile.follows.add(to_follow.userprofile)
-            return Response(status=status.HTTP_200_OK, data={'Success': True})
-        except User.DoesNotExist:
-            Response(status=status.HTTP_404_NOT_FOUND)
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserProfileSerializer

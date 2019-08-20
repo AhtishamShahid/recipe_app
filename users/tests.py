@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework import status
-from users.views import APIChangePasswordView, follow_user
+from users.views import APIChangePasswordView, FollowUser
 
 
 class UserTest(APITestCase):
@@ -352,8 +352,9 @@ class FollowersManagementTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         factory = APIRequestFactory()
-        view = follow_user
-        request = factory.post(self.url, data={'user_id': self.usr2.pk})
+        view = FollowUser.as_view()
+        request = factory.post(self.url, data={'user_id': 333})
+
         force_authenticate(request, user=self.usr1)
         auth_response = view(request)
-        self.assertEqual(auth_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(auth_response.status_code, status.HTTP_201_CREATED)

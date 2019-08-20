@@ -11,6 +11,6 @@ urlpatterns = [
     path('users/', views.UserList.as_view(), name='user-create'),
     path('users/change-password/', views.APIChangePasswordView.as_view(),
          name='user-change-password'),
-    path('users/follow-request/', views.follow_user, name='follow-user'),
+    path('users/follow-request/', views.FollowUser.as_view(), name='follow-user'),
     path('users/<int:pk>/', views.UserDetail.as_view()),
 ]

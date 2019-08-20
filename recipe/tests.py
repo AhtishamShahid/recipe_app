@@ -174,10 +174,8 @@ class RecipeTest(APITestCase):
             ]
         }
         create_recipe(data, user)
-        """
-        Created follower
-        """
 
+        # Created follower
         factory = APIRequestFactory()
         view = FollowUser.as_view()
         request = factory.post(reverse('follow-user'), data={'user_id': user.pk})

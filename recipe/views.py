@@ -35,6 +35,9 @@ class RecipeList(generics.ListCreateAPIView):
 
 
 class RecipeListFollowing(generics.ListAPIView):
+    """
+    To list recipes user is following
+    """
     serializer_class = RecipeSerializer
 
     def get_queryset(self):

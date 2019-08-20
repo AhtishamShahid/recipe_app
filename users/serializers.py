@@ -1,9 +1,8 @@
 """
 user Module serializer
 """
-from rest_framework import serializers, status
+from rest_framework import serializers
 from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 from recipe.models import Recipe
@@ -103,6 +102,9 @@ class UserPasswordChangeSerializer(serializers.Serializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    """
+    UserProfileSerializer
+    """
     user_id = serializers.IntegerField(required=True)
 
     class Meta:

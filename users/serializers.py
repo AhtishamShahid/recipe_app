@@ -120,4 +120,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             User.objects.get(pk=attrs['user_id'])
         except User.DoesNotExist:
             raise serializers.ValidationError('This user does not exist.')
+
+        if self.context['request'].user.id == attrs['user_id']:
+            raise serializers.ValidationError('User Cannot Follow himself')
+
         return attrs

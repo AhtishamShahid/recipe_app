@@ -6,7 +6,8 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 from rest_framework import status
-from recipe.views import RecipeList
+from recipe.views import RecipeList, RecipeListFollowing
+from users.views import FollowUser
 from .models import Recipe, Ingredients
 
 
@@ -156,3 +157,37 @@ class RecipeTest(APITestCase):
         add_ingredients_to_recipe
         :return:
         """
+
+    def test_following_recipe_list_page(self):
+        """
+        test_recipe_list_page
+        :return:
+        """
+        user = User.objects.create_user('testuser2', 'test2@example.com', 'testpassword')
+        i = Ingredients.objects.create(title='Meat')
+        data = {
+            'title': 'title',
+            'description': 'title',
+            'directions': 'title',
+            'ingredients': [
+                i.id
+            ]
+        }
+        create_recipe(data, user)
+        """
+        Created follower
+        """
+
+        factory = APIRequestFactory()
+        view = FollowUser.as_view()
+        request = factory.post(reverse('follow-user'), data={'user_id': user.pk})
+        force_authenticate(request, user=self.test_user)
+        view(request)
+
+        factory = APIRequestFactory()
+        view = RecipeListFollowing.as_view()
+        request = factory.get(reverse('recipes-followings'))
+        force_authenticate(request, user=self.test_user)
+        response = view(request)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

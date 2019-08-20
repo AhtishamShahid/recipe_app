@@ -353,7 +353,7 @@ class FollowersManagementTests(APITestCase):
 
         factory = APIRequestFactory()
         view = FollowUser.as_view()
-        request = factory.post(self.url, data={'user_id': 333})
+        request = factory.post(self.url, data={'user_id': self.usr2.pk})
 
         force_authenticate(request, user=self.usr1)
         auth_response = view(request)

@@ -34,6 +34,17 @@ class RecipeList(generics.ListCreateAPIView):
         })
 
 
+class RecipeListFollowing(generics.ListAPIView):
+    serializer_class = RecipeSerializer
+
+    def get_queryset(self):
+        id_arr = []
+        users_profiles = self.request.user.userprofile.follows.all()
+        for users_profile in users_profiles:
+            id_arr.append(users_profile.user.id)
+        return Recipe.objects.filter(user_id__in=id_arr)
+
+
 class RecipeDetail(generics.RetrieveUpdateDestroyAPIView):  # pylint:disable=too-many-ancestors
     """
     CBV for Recipe detail page

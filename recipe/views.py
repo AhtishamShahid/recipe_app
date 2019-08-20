@@ -38,6 +38,10 @@ class RecipeListFollowing(generics.ListAPIView):
     serializer_class = RecipeSerializer
 
     def get_queryset(self):
+        """
+        To filter recipes by followers
+        :return:
+        """
         id_arr = []
         users_profiles = self.request.user.userprofile.follows.all()
         for users_profile in users_profiles:

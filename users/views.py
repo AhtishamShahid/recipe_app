@@ -3,37 +3,12 @@
 user Application views
 """
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import generics
 from django.contrib.auth.models import User
 from .serializers import UserSerializer, UserPasswordChangeSerializer, UserProfileSerializer
-
-
-class UserCreate(APIView):
-    """
-    Creates the user.
-    """
-
-    def post(self, request):
-        """
-        over ride post method to make custom token for auth
-        :param request:
-        :param format:
-        :return:
-        """
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            if user:
-                token = Token.objects.create(user=user)
-                json = serializer.data
-                json['token'] = token.key
-                return Response(json, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomAuthToken(ObtainAuthToken):
@@ -68,7 +43,6 @@ class UserList(generics.ListCreateAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    paginate = 3
 
     def get_queryset(self):
         queryset = User.objects.all()

@@ -3,6 +3,7 @@ user Application urls
 """
 from django.conf.urls import url
 from django.urls import path
+
 from . import views
 
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
          name='user-change-password'),
     path('users/follow-request/', views.FollowUser.as_view(), name='follow-user'),
     path('users/<int:pk>/', views.UserDetail.as_view()),
+
 ]

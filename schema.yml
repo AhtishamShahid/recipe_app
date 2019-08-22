@@ -1,0 +1,685 @@
+openapi: 3.0.2
+info:
+  title: ''
+  version: TODO
+paths:
+  /api/users/:
+    get:
+      operationId: ListUsers
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - username
+                - email
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  username:
+                    type: string
+                    maxLength: 32
+                  email:
+                    type: string
+                    format: email
+                  recipe_count:
+                    type: string
+                    readOnly: true
+                  recipe:
+                    type: array
+                    items:
+                      type: string
+                    readOnly: true
+                  following:
+                    type: string
+                    readOnly: true
+    post:
+      operationId: CreateUser
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - username
+              - email
+              - password
+              properties:
+                username:
+                  type: string
+                  maxLength: 32
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  writeOnly: true
+                  minLength: 8
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - username
+                - email
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  username:
+                    type: string
+                    maxLength: 32
+                  email:
+                    type: string
+                    format: email
+                  recipe_count:
+                    type: string
+                    readOnly: true
+                  recipe:
+                    type: array
+                    items:
+                      type: string
+                    readOnly: true
+                  following:
+                    type: string
+                    readOnly: true
+  /api/users/{id}/:
+    get:
+      operationId: RetrieveUser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this user.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - username
+                - email
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  username:
+                    type: string
+                    maxLength: 32
+                  email:
+                    type: string
+                    format: email
+                  recipe_count:
+                    type: string
+                    readOnly: true
+                  recipe:
+                    type: array
+                    items:
+                      type: string
+                    readOnly: true
+                  following:
+                    type: string
+                    readOnly: true
+  /api/recipes/:
+    get:
+      operationId: ListRecipes
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - title
+                - description
+                - directions
+                - ingredients
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 100
+                  description:
+                    type: string
+                    maxLength: 600
+                  directions:
+                    type: string
+                    maxLength: 600
+                  user_id:
+                    type: string
+                    readOnly: true
+                  pub_date:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  ingredients:
+                    type: array
+                    items:
+                      type: integer
+    post:
+      operationId: CreateRecipe
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - title
+              - description
+              - directions
+              - ingredients
+              properties:
+                title:
+                  type: string
+                  maxLength: 100
+                description:
+                  type: string
+                  maxLength: 600
+                directions:
+                  type: string
+                  maxLength: 600
+                ingredients:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - title
+                - description
+                - directions
+                - ingredients
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 100
+                  description:
+                    type: string
+                    maxLength: 600
+                  directions:
+                    type: string
+                    maxLength: 600
+                  user_id:
+                    type: string
+                    readOnly: true
+                  pub_date:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  ingredients:
+                    type: array
+                    items:
+                      type: integer
+  /api/recipes/following-users:
+    get:
+      operationId: ListRecipes
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - title
+                - description
+                - directions
+                - ingredients
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 100
+                  description:
+                    type: string
+                    maxLength: 600
+                  directions:
+                    type: string
+                    maxLength: 600
+                  user_id:
+                    type: string
+                    readOnly: true
+                  pub_date:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  ingredients:
+                    type: array
+                    items:
+                      type: integer
+  /api/recipes/{id}:
+    get:
+      operationId: RetrieveRecipe
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this recipe.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - title
+                - description
+                - directions
+                - ingredients
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 100
+                  description:
+                    type: string
+                    maxLength: 600
+                  directions:
+                    type: string
+                    maxLength: 600
+                  user_id:
+                    type: string
+                    readOnly: true
+                  pub_date:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  ingredients:
+                    type: array
+                    items:
+                      type: integer
+    put:
+      operationId: UpdateRecipe
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this recipe.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - title
+              - description
+              - directions
+              - ingredients
+              properties:
+                title:
+                  type: string
+                  maxLength: 100
+                description:
+                  type: string
+                  maxLength: 600
+                directions:
+                  type: string
+                  maxLength: 600
+                ingredients:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - title
+                - description
+                - directions
+                - ingredients
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 100
+                  description:
+                    type: string
+                    maxLength: 600
+                  directions:
+                    type: string
+                    maxLength: 600
+                  user_id:
+                    type: string
+                    readOnly: true
+                  pub_date:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  ingredients:
+                    type: array
+                    items:
+                      type: integer
+    patch:
+      operationId: PartialUpdateRecipe
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this recipe.
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                title:
+                  type: string
+                  maxLength: 100
+                description:
+                  type: string
+                  maxLength: 600
+                directions:
+                  type: string
+                  maxLength: 600
+                ingredients:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - title
+                - description
+                - directions
+                - ingredients
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 100
+                  description:
+                    type: string
+                    maxLength: 600
+                  directions:
+                    type: string
+                    maxLength: 600
+                  user_id:
+                    type: string
+                    readOnly: true
+                  pub_date:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  ingredients:
+                    type: array
+                    items:
+                      type: integer
+    delete:
+      operationId: DestroyRecipe
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this recipe.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - title
+                - description
+                - directions
+                - ingredients
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  title:
+                    type: string
+                    maxLength: 100
+                  description:
+                    type: string
+                    maxLength: 600
+                  directions:
+                    type: string
+                    maxLength: 600
+                  user_id:
+                    type: string
+                    readOnly: true
+                  pub_date:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  ingredients:
+                    type: array
+                    items:
+                      type: integer
+  /api/ingredients/:
+    get:
+      operationId: ListIngredients
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - title
+                properties:
+                  title:
+                    type: string
+                    maxLength: 30
+                  pub_date:
+                    type: string
+                    format: date-time
+                    readOnly: true
+    post:
+      operationId: CreateIngredients
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - title
+              properties:
+                title:
+                  type: string
+                  maxLength: 30
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - title
+                properties:
+                  title:
+                    type: string
+                    maxLength: 30
+                  pub_date:
+                    type: string
+                    format: date-time
+                    readOnly: true
+  /api/login/:
+    post:
+      operationId: CreateCustomAuthToken
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+  /api/users/follow-request/:
+    post:
+      operationId: CreateUserProfile
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - user_id
+              properties:
+                user_id:
+                  type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - user_id
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  user_id:
+                    type: integer
+  /api/users/change-password/:
+    put:
+      operationId: UpdateUserPasswordChange
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - old_password
+              - password
+              - confirmed_password
+              properties:
+                old_password:
+                  type: string
+                  maxLength: 30
+                password:
+                  type: string
+                  maxLength: 30
+                confirmed_password:
+                  type: string
+                  maxLength: 30
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - old_password
+                - password
+                - confirmed_password
+                properties:
+                  old_password:
+                    type: string
+                    maxLength: 30
+                  password:
+                    type: string
+                    maxLength: 30
+                  confirmed_password:
+                    type: string
+                    maxLength: 30
+    patch:
+      operationId: PartialUpdateUserPasswordChange
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                old_password:
+                  type: string
+                  maxLength: 30
+                password:
+                  type: string
+                  maxLength: 30
+                confirmed_password:
+                  type: string
+                  maxLength: 30
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                required:
+                - old_password
+                - password
+                - confirmed_password
+                properties:
+                  old_password:
+                    type: string
+                    maxLength: 30
+                  password:
+                    type: string
+                    maxLength: 30
+                  confirmed_password:
+                    type: string
+                    maxLength: 30

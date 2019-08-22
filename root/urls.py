@@ -16,10 +16,15 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.views.generic import TemplateView
+
+from root import settings
 
 urlpatterns = [
+    url('openapi/', TemplateView.as_view(template_name="index.html")),
     path('admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
     url('api/', include('users.urls')),
     url('api/', include('recipe.urls')),
-]
+] + static(settings.STATIC_URL)
